@@ -1,5 +1,5 @@
 const sut = require("./index");
-
+const faker = require("faker");
 /*test('sut transforms "hello  world" to "hello world"', () => {
     const actual = sut("hello  world");
     expect(actual).toBe("hello world");
@@ -53,4 +53,25 @@ test.each`
     ({ source, bannedWords, expected }) => {
         const actual = sut(source, { bannedWords });
         expect(actual).toBe(expected);
+});
+
+describe('given banned word', () => {
+    const bannedWord = faker.lorem.word();
+    const source = "hello " + bannedWord;
+    const expected = "hello " + "*".repeat(bannedWord.length);
+
+    test(`${bannedWord} when invoke sut then it returns ${expected}`, () => {
+        const actual = sut(source, { bannedWords: [bannedWord] });
+        expect(actual).toBe(expected);
+    })
+});
+// 테스트 주도 개발을 위한 테스트 추가
+// 실패하면, 통과하기 위한 가장 빠르고 단순한 방법의 운영코드 개선을 추가한다.
+// 실패(red) - 통과(green) - 리팩터링(blue)
+test.each`
+    source | expected
+    ${" hello world"} | ${"hello world"}
+`('sut correctly trims whitespace',({ source, expected }) => {
+    const actual = sut(source);
+    expect(actual).toBe(expected);
 });
